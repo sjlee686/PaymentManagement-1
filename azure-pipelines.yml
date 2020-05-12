@@ -10,9 +10,9 @@ resources:
 
 variables:
 - group: common-value
-  # containerRegistry: 'event.azurecr.io'
-  # containerRegistryDockerConnection: 'acr'
-  # environment: 'aks.default'
+  # containerRegistry: 'team3acr.azurecr.io'
+  # containerRegistryDockerConnection: 'team3Conn'
+  # environment: 'team3env'
 - name: imageRepository
   value: 'PaymentManagement'
 - name: dockerfilePath
@@ -26,7 +26,6 @@ variables:
   value: $(Pipeline.Workspace)/.m2/repository
 - name: MAVEN_OPTS
   value: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
-
 
 stages:
 - stage: Build
@@ -48,7 +47,7 @@ stages:
     - task: Maven@3
       inputs:
         mavenPomFile: 'pom.xml'
-        options: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
+        options: '-Dmaven.test.skip=true -Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
         javaHomeOption: 'JDKVersion'
         jdkVersionOption: '1.8'
         jdkArchitectureOption: 'x64'
@@ -115,7 +114,7 @@ stages:
                             failureThreshold: 10
                           livenessProbe:
                             httpGet:
-                              path: /products/1
+                              path: /actuator/health
                               port: 8080
                             initialDelaySeconds: 120
                             timeoutSeconds: 2
